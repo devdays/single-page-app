@@ -1,0 +1,178 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Products Using Custom LoDash Plug-in for Sammy</title>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="#!/">Home</a></li>
+            <li><a href="#!/products">Products</a></li>
+            <li><a href="#!/products/1">Product 1</a></li>
+            <li><a href="#!/data">Data</a></li>
+        </ul>
+    </nav>
+    <div id="tweetBtn">
+    <a class="twitter-share-button" 
+        href="http://twitter.com/share" 
+        data-url="http://test.com" 
+        data-text="REPLACEME">Tweet</a>
+    <script>!function (d, s, id) { var js, fjs = d.getElementsByTagName(s)[0]; if (!d.getElementById(id)) { js = d.createElement(s); js.id = id; js.src = "//platform.twitter.com/widgets.js"; fjs.parentNode.insertBefore(js, fjs); } }(document, "script", "twitter-wjs");</script>
+</div>
+
+    <div id='content'></div>
+
+    <script src="Scripts/require.js"></script>
+    <script>
+        // ====== set up require.js ================
+        (function () {
+            "use strict";
+
+            require.config({
+                baseUrl: 'Scripts',
+                paths: {
+                    "underscore": "lodash",
+                    "jquery": "jquery-1.9.1",
+                    //"q": "q",
+                    "sammy": "sammy-0.7.4",
+                    "lodashPlugin": "sammy.lodash"
+                },
+                //priority: ['jquery', 'sammy'],
+                shim: {
+                    "amplify": {
+                         //These script dependencies should be loaded before loading
+                         //jquery.js
+                         deps: ["jquery"],
+                         //Once loaded, use the global 'amplify' as the
+                         //module value.
+                         exports: "amplify"
+                     }, 
+                    // we get an error that "jQuery is not defined" error without this 
+                    // shim for sammy
+                    "sammy": {
+                        deps: ["jquery"],
+                        exports: "sammy"
+                    }
+                }
+            });
+
+        })();
+
+        require(['sammy', 'lodashPlugin'], function (sammy) {
+            "use strict";
+            console.log("initializing sammy");
+
+            var app = sammy('#content', function () {
+
+                this.helpers({
+                    alert: function (message) {
+                        this.log(prefix, message, suffix);
+                    },
+                    updateSocialMediaLink: function (linkStatus, route) {
+                        //var longUrl = document.domain + route;
+                        var longUrl = "http://trainingdays.com" + route;
+                        getShortUrl(longUrl, function (shortUrl) {
+                            console.log("shortUrl: " + shortUrl);
+
+                            // Remove existing iframe
+                            $('#tweetBtn iframe').remove();
+                            // Generate new markup
+                            var tweetBtn = $('<a></a>')
+                                .addClass('twitter-share-button')
+                                .attr('href', 'http://twitter.com/share')
+                                .attr('data-url', shortUrl)
+                                .attr('data-text', linkStatus)
+                                .attr('data-via', 'protrainingday');
+                            $('#tweetBtn').append(tweetBtn);
+                            twttr.widgets.load();
+                        });
+                    }
+
+                });
+
+                // first param is a function name
+                this.use('LoDash', 'html');
+
+                // the callback is the entire route wrapped in a closure
+                this.around(function (callback) {
+                    var context = this;
+                    this.load('data/3-products.txt', { json: true })
+                        .then(function (items) {
+                            context.items = items;
+                        })
+                        .then(callback);
+                });
+
+
+                this.get('#!/', function (context) {
+                    this.updateSocialMediaLink("You're on the main page", '#!/');
+                    context.app.swap(''); // clear the content area before loading the partials
+                    context.$element().append('<h1>Main page</h1>');
+                });
+
+                this.get('#!/data', function (context) {
+                    this.updateSocialMediaLink("You're on the data page", '#!/data');
+                    context.app.swap(''); // clear the content area before loading the partials
+                    context.$element().append(JSON.stringify(context.items));
+                });
+
+                this.get('#!/products/:id', function (context) {
+                    
+                    var param = context.params['id'];
+                    var products = context.items.products
+
+                    // find the product based on the value of :id
+                    var productData = _.find(products, function (product) {
+                        return product.id.toString() === param;
+                    });
+
+                    if (!productData) {
+                        return context.notFound();
+                    }
+
+                    this.updateSocialMediaLink("You're on the " + productData.name + " page", '#!/products/' + param);
+
+                    // partial() internally calls render and swap 
+                    // creates the html and puts it into $element
+                    context.partial('Templates/4-product.html', { product: productData });
+                });
+
+                this.get('#!/products', function (context) {
+                    var products = context.items;
+                    this.updateSocialMediaLink("You're on the products page", '#!/products');
+                    context.app.swap('');  // clear out the $element in this case '#content'
+                    context.render('templates/4-products.html', products)
+                        .appendTo(context.$element());
+                });
+            });
+
+            $(function () {
+                app.run('#!/');
+            });
+
+            // bitly api
+            function getShortUrl(longUrl, func) {
+                console.log("before encoding bit.ly: " + JSON.stringify(longUrl));
+                var encodedUri = encodeURI(longUrl);
+                console.log("to bit.ly: " + JSON.stringify(longUrl));
+                var login = "nextechu";
+                var apiKey = "R_dd76fc6be6ff72af87980767d5ef07c6";
+                $.getJSON(
+                    "http://api.bitly.com/v3/shorten?callback=?",
+                    {
+                        "format": "json",
+                        "apiKey": apiKey,
+                        "login": login,
+                        "longUrl": encodedUri
+                    },
+                    function (response) {
+                        console.log("bit.ly response: " + JSON.stringify(response));
+                        func(response.data.url);
+                    }
+                );
+            }
+        })();
+    </script>
+</body>
+</html>
+

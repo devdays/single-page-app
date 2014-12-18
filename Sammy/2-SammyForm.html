@@ -1,0 +1,68 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Sammy Forms</title>
+</head>
+<body>
+<nav id="nav">
+    <ul>
+      <li><a href="#/form">Form</a></li>
+      <li><a href="#/redirect">Redirect</a></li>
+      <li><a href="#/">Back</a></li>
+    </ul>
+</nav>
+
+    <div id="content"></div>
+
+    <script src="Scripts/jquery-1.9.1.js"></script>
+    <script src="Scripts/sammy-0.7.4.js"></script>
+    <script>
+        (function ($) {
+            var app = $.sammy('#content', function () {
+                this.debug = true;
+                var form_fields = null;
+              
+                this.get('#/', function () {
+                    this.app.swap('Click form!');
+                });
+
+
+                this.get('#/redirect', function () {
+                    this.redirect('#/');
+                });
+
+
+                this.get('#/form', function () {
+                    this.partial('Files/2-Form.html');
+                });
+
+
+                this.post('#/pretend/post/url', function () {
+                    form_fields = this.params;
+                    this.log($.param(form_fields.toHash()));
+                    this.redirect('#/display');
+                });
+
+
+                this.get('#/display', function () {
+                    if (form_fields) {
+                        this.app.swap(form_fields.toHTML());
+                    } else {
+                        this.redirect('#/form')
+                    }
+                });
+
+
+            });
+
+
+            $(function () {
+                app.run('#/');
+            });
+
+
+        })(jQuery);
+
+    </script>
+</body>
+</html>

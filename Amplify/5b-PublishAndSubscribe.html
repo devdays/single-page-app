@@ -1,0 +1,85 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Get Products</title>
+</head>
+<body>
+    <div class="main-content">
+        <h1>All Products</h1>
+        <div id="sampleArea"></div>
+    </div>
+    <div id="alertArea"></div>
+    <div id="addProductDiv">
+        <h5>Add Product</h5>
+        <form id="addProductForm">
+            <div>
+                <label for="productName">Product Name</label>
+                <input type="text" name="productName" placeholder="Product" />
+            </div>
+            <div>
+                <label for="category">Category</label>
+                <input type="text" name="category" placeholder="Category" />
+            </div>
+            <div>
+                <label for="price">Price</label>
+                <input type="number" name="price" min="0" />
+            </div>
+            <button id='addProductButton'>Add</button>
+        </form>
+    </div>
+    <div><button id='clearProductsButton'>Clear</button></div>
+    <script id="productTmpl" type="text/template">
+        <ul>
+            {{#products}}
+            <li>{{productName}} {{category}} {{price}}</li>
+            {{/products}}
+        </ul>
+        {{^products}}
+        <p>No products listed.</p>
+        {{/products}}
+    </script>
+    <script src="Scripts/jquery-1.4.4.js"></script>
+    <script src="Scripts/mustache.js"></script>
+    <script src="Scripts/amplify.js"></script>
+    <script src="Scripts/app/utils.js"></script>
+    <script src="Scripts/app/product.js"></script>
+    <script>
+        var p = app.product;
+
+            updateProductDisplay();
+
+            function updateProductDisplay() {
+                var products = p.all();
+                var template = $("#productTmpl").html();
+                var html = Mustache.to_html(template, products);
+                $('#sampleArea').html(html);
+            }
+
+        // Add product button handler creates a new PRODUCT object
+        // which publishes the addition
+        $("#addProductButton").click(function () {
+            var form = $('#addProductForm');
+            p.create(
+                form.find('[name=productName]').val(),
+                form.find('[name=category]').val(),
+                form.find('[name=price]').val()
+            );
+            form.find('input').val('');
+        });
+
+        amplify.subscribe("productCreated", function (product) {
+            p.add(product);
+        });
+
+        amplify.subscribe("productsStoreUpdated", function() {
+            updateProductDisplay();
+        });
+
+        $("#clearProductsButton").click(function () {
+            p.clear();
+        });
+    </script>
+</body>
+</html>
+
+

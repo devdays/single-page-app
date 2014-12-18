@@ -1,0 +1,30 @@
+﻿{
+    "products": [
+        {
+            "id": 1,
+            "name": "Toy1",
+            "category": "Toy",
+            "price": 45.05,
+            "description": "<p>This is <strong>strong</strong> description Toy1</p>"
+        },
+        {
+            "id": 2,
+            "name": "Toy2",
+            "category": "Toy",
+            "price": 35.2,
+            "description": "<p>This is an <em>emphasis</em> description of Toy2</p>"
+        }
+    ],
+    "stores": [
+        {
+            "id": 1,
+            "location": "SaltLakeCity, UT",
+            "hours": "9 to 9"
+        },
+        {
+            "id": 2,
+            "location": "Chicago, IL",
+            "hours": "10 to 9"
+        }
+    ]
+}

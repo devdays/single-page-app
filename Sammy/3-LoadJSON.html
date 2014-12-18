@@ -1,0 +1,57 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Load Products</title>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="#/products">Products</a></li>
+            <li><a href="#/data">Data</a></li>
+        </ul>
+    </nav>
+    <div id='content'></div>
+    <script src="Scripts/jquery-1.9.1.js"></script>
+    <script src="Scripts/sammy-0.7.4.js"></script>
+    <script>
+        (function () {
+            var app = $.sammy('#content', function () {
+                // the callback is the entire route wrapped in a closure
+                this.around(function (callback) {
+                    var context = this;
+                    this.load('data/3-products.txt', { json: true, cache: true })
+                            .then(function (items) {
+                                context.items = items;
+                                console.log("loaded: " + JSON.stringify(context.items));
+                            })
+                            .then(callback);
+                });
+
+
+                this.get('#/', function (context) {
+                    context.log('Yo yo yo');
+                    context.app.swap(''); // clear the content area before loading the partials
+                    context.$element().append('<h1>Yo yo yo</h1>');
+                });
+
+                this.get('#/data', function (context) {
+                    // context.items is the data as saved in this.around
+                    context.log('#/data ' + JSON.stringify(context.items));
+                    context.$element().append(JSON.stringify(context.items));
+                });
+
+                this.get('#/:item', function (context) {
+                    context.log('#/:item ' + JSON.stringify(context.items));
+                    var param = this.params['item'];
+                    context.log('Ho ho ho ' + param);
+                });
+            });
+
+            $(function () {
+                app.run('#/');
+            });
+
+        })();
+    </script>
+</body>
+</html>

@@ -1,0 +1,78 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+</head>
+<body>
+    <h3>Toys</h3>
+    <ul id="toys"></ul>
+    <p>Expensive Toys</p>
+    <ul id="expensiveToys"></ul>
+    <h3>Games</h3>
+    <ul id="games"></ul>
+    <script src="Scripts/jquery-2.0.2.js"></script>
+    <script>
+        $(document).ready(function () {
+// start with JSON (perhaps received using $.getJSON() )
+var myJSONString = '{' +
+    '"products":' +
+    ' ['+
+    '    { "name": "Slinkey", "category": "Toy", "price": 9.56 },  ' +
+    '    { "name": "Hamburger", "category": "Grocery", "price": 2.49 },  ' +
+    '    { "name": "Squirt Gun", "category": "Toy", "price": 8.50 },  ' +
+    '    { "name": "Board Game 1", "category": "Game", "price": 35 },  ' +
+    '    { "name": "Card Game 1", "category": "Game", "price": 8.50 },   ' +
+    '    { "name": "Poker", "category": "Game", "price": 75.50 },  ' +
+    '    { "name": "Blocks", "category": "Toy", "price": 2.5 },  ' +
+    '    { "name": "Tricycle", "category": "Toy", "price": 95 },  ' +
+    '    { "name": "Jacks", "category": "Toy", "price": 3.5 },  ' +
+    '    { "name": "Lettuce", "category": "Grocery", "price": 25 }  ' +
+    ' ]  ' +
+    ', "store": "Dover Town Center"  ' +
+'}';
+
+// put JSON into an object
+var myData = JSON.parse(myJSONString);
+
+// Get just the toys by grep on products
+var toys = $.grep(myData.products, function (element, index) {
+    // return whether myData.products.category == 'Toy'
+    return element.category == "Toy";
+});
+
+// toys is a new array of the matching products
+$.each(toys, function (i) {
+    $('#toys').append("<li class='toy'>" + toys[i].name + "</li>");
+});
+
+// demonstrate how Grep can have multiple criteria
+var expensiveToys = $.grep(myData.products, function (element, index) {
+    return element.category == "Toy" && element.price > 9;
+});
+
+            $.each(expensiveToys, function (i) {
+                $('#expensiveToys').append("<li>" + expensiveToys[i].name + "</li>");
+            });
+
+// Filter the results of the list items
+$(".toy").filter(':even').css('background-color', 'khaki');
+
+var games = $(myData.products).filter(function (index) {
+    return myData.products[index].category == "Game";
+});
+
+// console.log(JSON.stringify(games));
+
+
+        var groceryIndices = $.map(myData.products, function (val, i) {
+            return val.category == "Grocery" ? val.myProductIndex = i : null;
+        });
+            console.log("groceryIndices=" + JSON.stringify(groceryIndices));
+$.each(groceryIndices,function(index, value)
+{
+    console.log(JSON.stringify(myData.products[value]));
+});
+        });
+    </script>
+</body>
+</html>

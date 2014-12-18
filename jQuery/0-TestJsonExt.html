@@ -1,0 +1,30 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Test GetJSON</title>
+</head>
+<body>
+    <button id="txt">Get JSON txt data</button>
+    <button id="json">Get JSON json data</button>
+<div id="test"></div>
+        <script src="Scripts/jquery-2.0.2.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("#txt").click(function () {
+                $.getJSON("data/somejson.txt", function (result) {
+                    $("#test").text(JSON.stringify(result));
+                }).fail(function () {
+                    $("#test").text("text File did not work");
+                });
+            });
+            $("#json").click(function () {
+                $.getJSON("data/somejson.json", function (result) {
+                    $("#test").text(JSON.stringify(result));
+                }).fail(function () {
+                    $("#test").text("JSON File did not work");
+                });
+            });
+        });
+</script>
+</body>
+</html>

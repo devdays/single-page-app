@@ -1,0 +1,39 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Store and Retrieve a Product</title>
+</head>
+<body>
+    <h1>My Store</h1>
+    <p id="product"></p>
+    <p id="dough"></p>
+
+
+    <script src="Scripts/jquery-1.4.4.js"></script>
+    <script src="Scripts/amplify.js"></script>
+    <script>
+        $(function () {
+            // you can store a simple data value
+            amplify.store("product", "Bolt cutter");
+
+            // and then retrieve it using its key
+            var myProduct = amplify.store("product");
+            $("#product").text("product of the day is " + myProduct);
+
+            /* you can store a more complex value without having
+            to do JSON conversions */
+            var product = {
+                name: "My Cookie Dough",
+                size: "24 oz"
+            };
+
+            // store the product in local storage or cookie
+            amplify.store("storeProduct1", product);
+            // now retrive the product using the key
+            var item = amplify.store("storeProduct1");
+            $("#dough").text(item.name + " available in " + item.size + ".");
+        });
+    </script>
+
+</body>
+</html>

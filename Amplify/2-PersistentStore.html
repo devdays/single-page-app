@@ -1,0 +1,40 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Persist on Local Store</title>
+</head>
+<body>
+    <h3>Save My Name</h3>
+    <label for='firstName'>First Name:</label>
+    <div class='input'><input type='text' id='firstName'  /></div>
+    <label for='lastName'>Last Name:</label>
+    <div class='input'><input type='text' id='lastName'  /></div>
+    <input id="storeMe" type="button" value="Store" />
+    <p>Type F5 to refresh page with new data.</p>
+
+    <script src="Scripts/jquery-1.4.4.js"></script>
+    <script src="Scripts/amplify.js"></script>
+    <script>
+        var myName = { firstName: "", lastName: "" };
+        console.log("myName=" +JSON.stringify(myName));
+        $(function () {
+            aName = amplify.store("name");
+            if (typeof aName !== 'undefined') {
+                myName = aName;
+                $("#firstName").attr("placeholder", myName.firstName);
+                 $("#lastName").attr("placeholder", myName.lastName);
+            } else {
+                $("#firstName").attr("placeholder","John")
+                $("#lastName").attr("placeholder","Jones");
+            }
+        });
+
+        $("#storeMe").click(function () {
+            myName.firstName = $("#firstName").val();
+            myName.lastName = $("#lastName").val();
+            amplify.store("name", myName);
+        });
+
+    </script>
+</body>
+</html>

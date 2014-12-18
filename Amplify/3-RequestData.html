@@ -1,0 +1,31 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Store and Brand</title>
+</head>
+<body>
+    <h3>Click for Store and Brand</h3>
+    <p id="products"></p>
+    <p>Watch for server hits in the developer panel</p>
+    <input id="productsClick" type="button" value="Click to get products" />
+    <script src="Scripts/jquery-1.4.4.js"></script>
+    <script src="Scripts/amplify.js"></script>
+    <script>
+        amplify.request.define("easyData", "ajax", {
+            url: "Data/easydata.txt",
+            dataType: "json",
+            type: "GET"
+        });
+
+        $("#products").hide();
+
+        $("#productsClick").click(function (eventData) {
+            // first call retrieves data from server
+            amplify.request("easyData", function (data) {
+                $("#products").text(data.products).show();
+            });
+        });
+    </script>
+</body>
+</html>
+

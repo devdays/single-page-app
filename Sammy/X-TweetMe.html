@@ -1,0 +1,75 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Tweet Me</title>
+</head>
+<body>
+    <div>
+        <a id="tweetLink" href="https://twitter.com/share" class="twitter-share-button" 
+    data-via="TechTrainingDay" 
+    data-url="http://trainingdays.com/#!/home.html"
+    data-size="large" 
+    data-count="none"
+    data-text="Check out this cool site about training." 
+    data-hashtags="trainingdays">Tweet</a>
+     </div>
+
+    <div id="content">Some Content</div>
+
+    <script src="Scripts/jquery-1.9.1.js"></script>
+    <script src="Scripts/sammy-0.7.4.js"></script>
+    <script>/*!function (d, s, id) { var js, fjs = d.getElementsByTagName(s)[0], p = /^http:/.test(d.location) ? 'http' : 'https'; if (!d.getElementById(id)) { js = d.createElement(s); js.id = id; js.src = p + "://platform.twitter.com/widgets.js"; fjs.parentNode.insertBefore(js, fjs); } }(document, "script", "twitter-wjs");*/</script>
+
+    <script>
+        var YOURAPIKEY = "4a97ab3af0b865be01de190afb5de7e9ccc754c5";
+        var YOURBITLYLOGIN = "nextechu";
+
+        var app = $.sammy('#content', function () {
+
+            //this.helpers({
+            //    alert: function (message) {
+            //        this.log(prefix, message, suffix);
+            //    },
+            //    updateTwitterLink: function (linkStatus, route) {
+            //        console.log("updateTwitterLink: " + linkStatus + " : " + route);
+            //    }
+            //});
+
+            this.get('/#!/', function (context) {
+                //updateTwitterLink('Checking out the home page', '/#!/');
+                context.app.swap(''); // clear the content area
+                context.$element().append('<h1>Main page</h1>');
+            });
+
+            this.get('/#!/page2', function (context) {
+                //updateTwitterLink('Checking out page2', '/#!/');
+                context.app.swap(''); // clear the content area before loading the partials
+                context.$element().append('<h1>Page 2</h1>');
+            });
+
+            $(function () {
+                app.run('/#!/');
+            });
+
+            // bitly api
+            //function getShortUrl(longUrl, login, apiKey, func) {
+            //    var encodedUri = encodeURI(longUrl);
+            //    $.getJSON(
+            //        "http://api.bitly.com/v3/shorten?callback=?",
+            //        {
+            //            "format": "json",
+            //            "apiKey": apiKey,
+            //            "login": login,
+            //            "longUrl": encodedUri
+            //        },
+            //        function (response) {
+            //            console.log("bit.ly response: " + JSON.stringify(response));
+            //            func(response.data.url);
+            //        }
+            //    );
+            //};
+        })();
+    </script>
+
+</body>
+</html>

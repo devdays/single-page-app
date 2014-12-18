@@ -1,0 +1,4 @@
+﻿{
+    "products" : "Toys",
+    "brand" : "Toys For Kids"
+}

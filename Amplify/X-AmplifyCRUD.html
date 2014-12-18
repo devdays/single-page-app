@@ -1,0 +1,46 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+    <!-- from http://stackoverflow.com/questions/10808312/amplify-js-crud-like-urls -->
+    <!-- bug in update -->
+</head>
+<body>
+
+    <script>
+        resources = {
+            "document_create": ['/d/crud/', "POST"],
+            "document_read": ['/d/crud/{id}', "GET"],
+            "document_update": ['/d/crud/{id}', "PUT"],
+            "document_delete": ['/d/crud/{id}', "DELETE"]
+        };
+
+        $.each(resources, function (resource, settings) {
+            definition = {
+                url: settings[0],
+                type: settings[1],
+                dataType: "json",  // what comes back
+                decoder: 'jsend',
+                contentType: 'application/json' // what goes there
+            };
+
+            amplify.request.define(resource, "ajax", definition);
+        });
+
+        function make_request(resource, params, success_cb, error_cb) {
+            if (this.is_post(resource)) {
+                // this.is_post is a test, defined elsewhere, to see if this is a POST request
+                params = JSON.stringify(params);
+            }
+
+            amplify.request({
+                resourceId: resource,
+                data: params,
+            success: success_cb,
+            error: error_cb
+        });
+        }
+
+    </script>
+</body>
+</html>

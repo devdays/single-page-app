@@ -1,0 +1,81 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Basic Sammy</title>
+</head>
+<body>
+    <h3>Header</h3>
+
+<nav id="nav">
+    <ul>
+        <li><a href="#/bigletters'">Big Letters</a></li>
+        <li><a href="#/parseme/drafts">Parse Path</a></li>
+        <li><a href="#/parseme/id=123&name=john">Get my params</a></li>
+        <li><a href="#/compose">compose</a></li>
+        <li><a href="#/by_name/this">Alert this</a></li>
+        <li><a href="#/parseme/this/and/that">Does not work</a></li>
+        <li><a href="#/by_name/this/and/that">Alert This and that</a></li>
+    </ul>
+</nav>
+
+    <div id="content"></div>
+
+    <script src="Scripts/jquery-1.9.1.js"></script>
+    <script src="Scripts/sammy-0.7.4.js"></script>
+    <script>
+        var app = $.sammy(function () {
+
+            // set up a Sammy Application by passing a Function to the $.sammy 
+            // (which is a shortcut for the Sammy.Application constructor).
+            this.element_selector = '#content';
+
+            // respond to the #/bigletters route
+            this.get('#/bigletters', function (context) {
+
+                context.app.swap('');
+                context.$element().append('<h1>Big Letters</h1>');
+
+            });
+
+            // respond to the parseme route and pass in word paramater
+            this.get('#/parseme/:word', function (context) {
+                context.app.swap('');
+                context.$element().append('<h1>' + this.params['word'] + '</h1>');
+            });
+
+            // respond to the #/compose get verb by creating a form
+            this.get('#/compose', function (context) {
+                context.app.swap('');
+                context.$element().append('<h1>say hello to?</h1>'
+                  + '<form action="#/compose" method="post">'
+                  + '<input type="text" name="to" />'
+                  + '<input type="submit" name="submit" />'
+                  + '</form>');
+            });
+
+            // respond to the #/compose post verb by taking the to param
+            // and displaying it in a heading
+            this.post('#/compose', function (context) {
+                context.app.swap('');
+                var to = this.params['to'];
+                context.$element().append('<h1>hi ' + to + '</h1>');
+
+                // do not actually submit the form 
+                return false;
+            });
+
+            // get the params with slashes
+            this.get(/\#\/by_name\/(.*)/, function () {
+                alert(this.params['splat']);
+            });
+
+
+            $(function () {
+                app.run('#/bigletters');
+            });
+
+
+        });
+    </script>
+</body>
+</html>

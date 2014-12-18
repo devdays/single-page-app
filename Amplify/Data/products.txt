@@ -1,0 +1,18 @@
+﻿{
+    "products": [
+        {
+            "id": 1,
+            "name": "Squirt gun",
+            "category": "Toy",
+            "price": 45.05,
+            "description": "<p>This is <strong>strong</strong> description Toy1</p>"
+        },
+        {
+            "id": 2,
+            "name": "Action figure",
+            "category": "Toy",
+            "price": 35.20,
+            "description": "<p>This is an <em>emphasis</em> description of Toy2</p>"
+        }
+    ]
+}

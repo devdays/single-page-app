@@ -1,0 +1,64 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Store and Brand</title>
+</head>
+<body>
+    <h3>Click for Store and Brand</h3>
+    <p id="products"></p>
+    <p id="brand"></p>
+    <p>Watch for server hits in the developer panel</p>
+
+    <input id="productsClick" type="button" value="Click to get products" />
+    <input id="brandClick" type="button" value="Click to get brand" />
+
+    <script src="Scripts/jquery-1.4.4.js"></script>
+    <script src="Scripts/amplify.js"></script>
+    <script>
+        amplify.request.define("easyData", "ajax", {
+            url: "Data/easydata.txt",
+            dataType: "json",
+            type: "GET",
+            // Cache the data in local storage
+            cache: "persist",
+        });
+
+        $("#products").hide();
+        $("#brand").hide();
+
+        $("#productsClick").click(function (eventData) {
+            // first call retrieves data from server
+            amplify.request({
+                resourceId: "easyData",
+                success: function (data) {
+                    $("#products").hide();
+                    $("#products").text(data.products).fadeIn("slow");
+
+                },
+                error: function (data, status) {
+                    errorLoading("products", data, status);
+                }
+            });
+        });
+
+        $("#brandClick").click(function (eventData) {
+            // a second call will result in retrieving from 
+            // the cache, rather than making a call to the server
+            amplify.request({
+                resourceId: "easyData",
+                success: function (data) {
+                    $("#brand").hide();
+                    $("#brand").text(data.brand).fadeIn("slow");
+                },
+                error: function (data, status) {
+                    errorLoading("brand", data, status);
+                }
+            });
+        });
+
+        function errorLoading(location, data, status) {
+            console.log("error loading " + location);
+        }
+    </script>
+</body>
+</html>

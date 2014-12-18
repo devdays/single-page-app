@@ -1,0 +1,119 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Products Using Custom LoDash Plug-in for Sammy</title>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="#/">Home</a></li>
+            <li><a href="#/products">Products</a></li>
+            <li><a href="#/products/1">Product 1</a></li>
+            <li><a href="#/data">Data</a></li>
+        </ul>
+    </nav>
+    <div id='content'></div>
+
+    <script src="Scripts/require.js"></script>
+    <script>
+        // ====== set up require.js ================
+        (function () {
+            "use strict";
+
+            require.config({
+                baseUrl: 'Scripts',
+                paths: {
+                    "underscore": "lodash",
+                    "jquery": "jquery-1.9.1",
+                    //"q": "q",
+                    "sammy": "sammy-0.7.4",
+                    "lodashPlugin" : "sammy.lodash"
+                },
+                //priority: ['jquery', 'sammy'],
+                shim: {
+                    /* "amplify": {
+                         //These script dependencies should be loaded before loading
+                         //jquery.js
+                         deps: ["jquery"],
+                         //Once loaded, use the global 'amplify' as the
+                         //module value.
+                         exports: "amplify"
+                     }, */
+                    // we get an error that "jQuery is not defined" error without this 
+                    // shim for sammy
+                    "sammy": {
+                        deps: ["jquery"],
+                        exports: "sammy"
+                    }
+                }
+            });
+
+        })();
+
+        require(['sammy', 'lodashPlugin'], function (sammy) {
+            "use strict";
+            console.log("initializing sammy");
+
+            var app = sammy('#content', function () {
+
+                // first param is a function name
+                this.use('LoDash', 'html');
+
+                // the callback is the entire route wrapped in a closure
+                this.around(function (callback) {
+                    var context = this;
+                    this.load('data/3-products.txt', { json: true })
+                        .then(function (items) {
+                            context.items = items;
+                        })
+                        .then(callback);
+                });
+
+
+                this.get('#/', function (context) {
+                    context.log('Yo yo yo');
+                    context.app.swap(''); // clear the content area before loading the partials
+                    context.$element().append('<h1>Main page</h1>');
+                });
+
+                this.get('#/data', function (context) {
+                    context.app.swap(''); // clear the content area before loading the partials
+                    context.$element().append(JSON.stringify(context.items));
+                });
+
+                this.get('#/products/:id', function (context) {
+
+                    var param = context.params['id'];
+                    var products = context.items.products
+
+                    // find the product based on the value of :id
+                    var productData = _.find(products, function (product) {
+                        return product.id.toString() === param;
+                    });
+
+                    if (!productData) {
+                        return context.notFound();
+                    }
+
+                    // partial() internally calls render and swap 
+                    // creates the html and puts it into $element
+                    context.partial('Templates/4-product.html', { product: productData });
+                });
+
+                this.get('#/products', function (context) {
+                    var products = context.items;
+
+                    context.app.swap('');  // clear out the $element in this case '#content'
+                    context.render('templates/4-products.html', products)
+                        .appendTo(context.$element());
+                });
+            });
+
+            $(function () {
+                app.run('#/');
+            });
+
+        })();
+    </script>
+</body>
+</html>

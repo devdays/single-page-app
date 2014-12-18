@@ -1,0 +1,106 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="#/">Home</a></li>
+            <li><a href="#/products">Products</a></li>
+            <li><a href="#/products/1">Product 1</a></li>
+            <li><a href="#/data">Data</a></li>
+            <li><a href="#/test">Test</a></li>
+        </ul>
+    </nav>
+    <div id='content'></div>
+    <script src="Scripts/jquery-1.9.1.js"></script>
+    <script src="Scripts/mustache.js"></script>
+    <script src="Scripts/sammy-0.7.4.js"></script>
+    <script src="Scripts/sammy.mustache.js"></script>
+    <script>
+        (function () {
+            "use strict";
+            console.log("initializing sammy");
+
+            var app = $.sammy('#content', function () {
+
+                // first param is a function name
+                this.use('Mustache', 'html');
+
+                // the callback is the entire route wrapped in a closure
+                this.around(function (callback) {
+                    var context = this;
+                    this.load('data/3-products.txt', { json: true })
+                        .then(function (items) {
+                            context.items = items;
+                        })
+                        .then(callback);
+                });
+
+
+                this.get('#/', function (context) {
+                    context.log('Yo yo yo');
+                    context.app.swap(''); // clear the content area before loading the partials
+                    context.$element().append('<h1>Main page</h1>');
+                });
+
+                this.get('#/data', function (context) {
+                    context.app.swap(''); // clear the content area before loading the partials
+                    context.$element().append(JSON.stringify(context.items));
+                });
+
+                this.get('#/products/:id', function (context) {
+
+                    var param = context.params['id'];
+                    var products = context.items.products;
+
+                    if (!products[param]) {
+                        return context.notFound();
+                    }
+
+                    // partial() internally calls render and swap 
+                    // creates the html and puts it into $element
+                    context.partial('Templates/productDetail.html', products[param]); 
+                });
+
+                this.get('#/products', function (context) {
+                    var products = context.items;
+
+                    context.app.swap('');  // clear out the $element in this case '#content'
+                    context.render('templates/productsList.html', products)
+                        .appendTo(context.$element());
+                });
+
+                /*
+                this.get('#/test', function (context) {
+                    var view = {
+                        title: "Joe",
+                        calc: function () {
+                            return 2 + 4;
+                        },
+                        desc: "<b>bold</b>"
+                    };
+
+                    //var output = Mustache.render("{{title}} spends {{calc}} {{{desc}}}", view);
+                    //console.log("output: " + output);
+                    //$("#content").html(output);
+
+                    var output = Mustache.to_html("{{title}} spends {{calc}} {{{desc}}}", view);
+                    console.log("output: " + output);
+                    $("#content").html(output);
+
+                });
+                */
+
+            });
+
+            $(function () {
+                app.run('#/');
+            });
+
+        })();
+    </script>
+</body>
+</html>
+
