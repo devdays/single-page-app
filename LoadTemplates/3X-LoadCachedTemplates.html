@@ -1,0 +1,127 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Load Cached Templates</title>
+</head>
+<body>
+    <div id="content"></div>
+    <div id="fail"></div>
+    <script src='require.js'></script>
+    <script>
+        requirejs.config({
+            baseUrl: 'Scripts',
+            paths: {
+                "_": "lodash",
+                "jquery": "jquery-2.0.3",
+                "q": "q"
+            },
+            //Remember: only use shim config for non-AMD scripts,
+            //scripts that do not already call define(). The shim
+            //config will not work correctly if used on AMD scripts,
+            //in particular, the exports and init config will not
+            //be triggered, and the deps config will be confusing
+            //for those cases.
+
+            shim: {
+                "amplify": {
+                    //These script dependencies should be loaded before loading
+                    //jquery.js
+                    deps: ["jquery"],
+                    //Once loaded, use the global 'amplify' as the
+                    //module value.
+                    exports: "amplify"
+                }
+            },
+            map: {
+                '*': { 'underscore': 'lodash' }
+            }
+        });
+
+        requirejs.onError = function (err) {
+            console.log(err.requireType);
+            if (err.requireType === 'timeout') {
+                console.log('modules: ' + err.requireModules);
+            }
+
+            throw err;
+        };
+
+
+        var data = {};
+        data.products =  [{ name: 'Action Figure', category: 'Toy' },
+               { name: 'Bicycle', category: 'Transportation' }];
+
+        display('productsTmpl', data, '#content');
+
+        // display('fail', data, '#fail');
+
+        function display(templateName, data, selector) {
+            var compiledTemplate;
+            require(['amplify', 'jquery', "q"],
+                function (amplify, $, Q) {
+
+                    fetchCompiledTemplate(amplify, Q, templateName).then(function (compiledTemplate) {
+                        console.log("compiledTemplate: " + compiledTemplate);
+                        var output = compiledTemplate(data);
+                        console.log("output: " + output + " to: " + selector + " : " + $(selector).outerHtml());
+                        $(selector).html(output);
+                    }, function (error) {
+                        var output = compiledTemplate(data);
+                        console.log("output: " + error);
+                        $(selector).text(error);
+                    });
+
+                function fetchCompiledTemplate(amplify, Q, templateName) {
+                    var deferred = Q.defer();
+                    compiledTemplate = amplify.store(templateName);
+                    console.log("fetch " + templateName + " or not? " + compiledTemplate);
+
+                    if (isItemCurrent(compiledTemplate, templateName)) 
+                    {
+                        console.log("item fetched from cache");
+                        deferred.resolve(compiledTemplate);
+                    }
+                    else {
+                        console.log("fetch from server");
+                        require([
+                            'underscore',
+                            'text!../Templates/' + templateName + '.html',
+                            'amplify',
+                            'domReady!'
+                        ],
+                        function (_, templateText, amplify) {
+                            console.log(templateName + " text fetched" + templateText);
+                            compiledTemplate = _.template(templateText);
+                            console.log("store " + templateName);
+                            amplify.store(templateName, compiledTemplate);
+                            console.log("template text compiled and stored !!!! " + templateName + ": " + compiledTemplate);
+                            deferred.resolve(compiledTemplate);
+                        },
+                        function (err) {
+                            deferred.reject(new Error("error loading " + templateName + ": " + err));
+                        }
+
+                        );
+                    }
+                    return deferred.promise;
+                }
+
+                
+            });
+        }
+
+        function isItemCurrent(item, templateName) {
+            
+            //if item is undefined or null then item is not current
+            if (undefined === item) {
+                console.log("isItemCurrent: false " + templateName +  JSON.stringify (item));
+                return false;
+            }
+            console.log("isItemCurrent: true: " + templateName + JSON.stringify(item));
+            return true;
+
+            //todo check version number
+        }
+    </script>
+</body>
+</html>

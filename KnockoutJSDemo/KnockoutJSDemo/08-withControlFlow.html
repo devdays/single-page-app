@@ -1,0 +1,24 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+</head>
+<body>
+    <h1 data-bind="text: product"></h1>
+    <p data-bind="with: warehouse">
+        Warehouse Location: <span data-bind="text: location"></span>,
+    Quantity Available: <span data-bind="text: quanAvail"></span>
+    </p>
+    <script src="Scripts/knockout-2.2.1.debug.js"></script>
+    <script type="text/javascript">
+        ko.applyBindings({
+            product: "Widget",
+            warehouse: {
+                location: "3D1",
+                quanAvail: 6
+            }
+        });
+    </script>
+
+</body>
+</html>

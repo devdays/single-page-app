@@ -1,0 +1,42 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+    <style>
+        .redItem {
+            color: red;
+        }
+        .greenItem {
+            color: green;
+        }
+    </style>
+</head>
+<body>
+    <div data-bind="html: someHtml"></div>
+    <div>And a link <a data-bind="attr: { href: myHref }">#</a></div>
+    <div data-bind="css: profitStatus, text: currentProfit"></div>
+    <button data-bind="click: reviseProfit">Revise Profit</button>
+
+    <script src="Scripts/knockout-2.2.1.debug.js"></script>
+    <script>
+        var viewModel = function () {
+            this.someHtml = "<span>Here is a <strong>bold</strong> text.</span>";
+            this.myHref = "#";
+
+            // Positive value, so initially we don't apply the "profitWarning" class
+            this.currentProfit = ko.observable(150000); 
+
+            this.profitStatus = ko.computed(function () {
+                return this.currentProfit() < 0 ? "redItem" : "greenItem";
+            }, this);
+
+
+            this.reviseProfit = function () {
+                this.currentProfit(-50);
+            };
+        };
+
+        ko.applyBindings(new viewModel());
+    </script>
+</body>
+</html>

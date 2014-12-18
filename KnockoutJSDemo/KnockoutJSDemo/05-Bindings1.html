@@ -1,0 +1,25 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Show Hide</title>
+</head>
+<body>
+    <div data-bind="visible: onoff">Show Me</div>
+    <button data-bind="click: showMe, disable: onoff">Show Text</button>
+    <button data-bind="click: hideMe, enable: onoff">Hide Text</button>
+    <script src="Scripts/knockout-2.2.1.debug.js"></script>
+    <script>
+        var viewModel = function () {
+            this.onoff = ko.observable(true); // onoff is intially set to true
+            hideMe = function() {
+                this.onoff(false); 
+            };
+            showMe = function () {
+                this.onoff(true);
+            };
+        }
+
+        ko.applyBindings(new viewModel());
+    </script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+﻿CACHE MANIFEST
+# 2013-07-31
+
+CACHE:
+Scripts/tmpl.js
+Scripts/require.js
+Scripts/text.js
+Scripts/domReady.js
+Scripts/lodash.js
+Templates/productsTmpl.html
+2-LoadEverythingWithAppCache.html

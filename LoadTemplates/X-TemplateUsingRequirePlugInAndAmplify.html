@@ -1,0 +1,77 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Load Text</title>
+    <!-- this demo probably does not make sense, although it does do great to show
+        how to build require plugins. Reason being that the app hits the server
+        everytime it needs a template, to run tmpl.js which runs amplify, even 
+        to retrieve the template.
+        It does not solve the issue of storing the templates locally without hitting
+        the server. 
+        bummer
+        -->
+</head>
+<body>
+    <div id="content"></div>
+    <script src='require.js'></script>
+    <script>
+        requirejs.config({
+            baseUrl: 'Scripts',
+            paths: {
+                "_":  "lodash",
+                "jquery": "jquery-2.0.3"
+                //,
+                // "amplify": "amplify"
+            },
+            //Remember: only use shim config for non-AMD scripts,
+            //scripts that do not already call define(). The shim
+            //config will not work correctly if used on AMD scripts,
+            //in particular, the exports and init config will not
+            //be triggered, and the deps config will be confusing
+            //for those cases.
+
+            shim: {
+                "amplify": {
+                    //These script dependencies should be loaded before loading
+                    //jquery.js
+                    deps: ["jquery"],
+                    //Once loaded, use the global 'amplify' as the
+                    //module value.
+                    exports: "amplify"
+                }
+            },
+            map: {
+                '*': { 'underscore': 'lodash' }
+            }
+        });
+
+        //require(['amplify'], function (amplify) {
+        //    console.log("getting amplify store");
+        //    var test = amplify.store("test");
+        //    console.log("leaving amplify store: " + JSON.stringify(test));
+        //});
+
+        //require(['amplify'], function (amplify) {
+        //console.log("ready to load template");
+        //var tmpl = loadTemplate("Templates/productsTmpl.html");
+        //});
+
+
+        require([
+            'underscore',
+            'tmpl!../Templates/productsTmpl.html',
+            'jquery',
+            'domReady!'
+            ],
+            function (_, productsTemplate, $ ) {
+                console.log("ready to display products" + productsTemplate );
+                var productsData = [{ name: 'Action Figure', category: 'Toy' },
+                    { name: 'Bicycle', category: 'Transportation' }];
+                var output = productsTemplate({ products: productsData });
+                console.log("output: " + output);
+                $("#content").html(output);
+            }
+        );
+    </script>
+</body>
+</html>

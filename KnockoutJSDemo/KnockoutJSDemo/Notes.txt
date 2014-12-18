@@ -1,0 +1,58 @@
+﻿Start with New Project | Empty ASP.NET Web Application
+Add Knockout from Nuget
+
+Create app.js file in Scripts
+Define your namespace in app.js
+window.my = {};
+
+
+Create your model in js file in file named productmodel in Scripts
+
+(function (my) {
+
+    function Product() {
+        var self = this;
+        self.sku = ko.observable("");
+        self.description = ko.observable("");
+        self.price = ko.observable(0.00);
+        self.cost = ko.observable(0.00);
+        self.quantity = ko.observable(0);
+    }
+    my.product = Product;
+
+} (my));
+
+Create view
+Create basic html file
+
+    <div id="productview">
+        <p>SKU <span data-bind="text: sku"></span></p>
+        <p>Desc <span data-bind="text: description"></span></p>
+        <p>Cost <span data-bind="text: cost"></span></p>
+        <p>Price <span data-bind="text: price"></span></p>
+        <p>Quantity <span data-bind="text: quantity"></span></p>
+    </div>
+
+
+
+
+drag knockout-2.X.X to the body
+drag app.js underneath
+drag productmodel underneath.. should have something like this
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>FirstDemo</title>
+    
+</head>
+<body>
+
+    <script src="Scripts/knockout-2.2.1.debug.js"></script>
+    <script src="Scripts/App.js"></script>
+    <script src="Scripts/productmodel.js"></script>
+</body>
+</html>
+
+then add items to bind to
+

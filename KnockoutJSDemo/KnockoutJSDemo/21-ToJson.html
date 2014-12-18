@@ -1,0 +1,71 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+    <style>
+        body { font-family: arial; font-size: 14px; }
+
+.formexample { padding: 1em; background-color: lightgray; border: 1px solid #CCC; max-width: 655px; }
+.formexample input { font-family: Arial; }
+.formexample b { font-weight: bold; }
+.formexample p { margin-top: 0.9em; margin-bottom: 0.9em; }
+.formexample select[multiple] { width: 100%; height: 8em; }
+.formexample h2 { margin-top: 0.4em; font-weight: bold; font-size: 1.2em; }
+
+.formexample table, .liveExample td, .liveExample th { padding: 0.2em; border-width: 0; }
+.formexample td input { width: 13em; }
+tr { vertical-align: top; }
+.formexample input.error { border: 1px solid red; background-color: #FDC; }
+.formexample label.error { display: block; color: Red; font-size: 0.8em; } 
+.formexample th { font-weight: bold; }
+
+li { list-style-type: disc; margin-left: 20px; }
+    </style>
+</head>
+<body class="formexample">
+    <form action='/someServerSideHandler'>
+        <p>You have asked for <span data-bind='text: gifts().length'>&nbsp;</span> gift(s)</p>
+        <table data-bind='visible: gifts().length > 0'>
+            <thead>
+                <tr>
+                    <th>Gift name</th>
+                    <th>Price</th>
+                </tr>
+            </thead>
+            <tbody data-bind='foreach: gifts'>
+                <tr>
+                    <td>
+                        <input class='required' data-bind='value: name, uniqueName: true' /></td>
+                    <td>
+                        <input class='required number' data-bind='value: price, uniqueName: true' /></td>
+                </tr>
+            </tbody>
+        </table>
+        <button data-bind='enable: gifts().length > 0' type='submit'>Submit</button>
+    </form>
+    <script src="Scripts/jquery-2.0.0.js"></script>
+    <script src="Scripts/jquery.validate.js"></script>
+    <script src="Scripts/knockout-2.2.1.debug.js"></script>
+    <script>
+        var GiftModel = function (gifts) {
+            var self = this;
+            self.gifts = ko.observableArray(gifts);
+
+            self.save = function (form) {
+                alert("Could now transmit to server: " + ko.utils.stringifyJson(self.gifts));
+                // To actually transmit to server as a regular form post, write this: 
+                // ko.utils.postJson($("form")[0], self.gifts);
+            };
+        };
+
+        var viewModel = new GiftModel([
+            { name: "Tall Hat", price: "39.95" }
+        ]);
+        ko.applyBindings(viewModel);
+
+        // Activate jQuery Validation
+        $("form").validate({ submitHandler: viewModel.save });
+
+    </script>
+</body>
+</html>

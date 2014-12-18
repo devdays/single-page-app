@@ -1,0 +1,20 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Control Flow Bindings</title>
+</head>
+<body>
+    <label>
+        <input type="checkbox" data-bind="checked: displayMessage" />
+        Display message</label>
+    <div data-bind="if: displayMessage">There's something important here.</div>
+
+    <script src="Scripts/knockout-2.2.1.debug.js"></script>
+    <script>
+        ko.applyBindings({
+            displayMessage: ko.observable(false)
+        });
+
+    </script>
+</body>
+</html>

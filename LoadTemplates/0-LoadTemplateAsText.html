@@ -1,0 +1,26 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Load Text</title>
+</head>
+<body>
+    <script src='require.js'></script>
+    <script>
+        requirejs.config({
+            baseUrl: 'Scripts',
+            paths: {
+                "_": "Scripts/lodash"
+            },
+            map: {
+                '*': { 'underscore': 'lodash' }
+            }
+        });
+        require(['underscore', 'text!friend-template.html', 'domReady!'],
+            function (_, friendsTemplate) {
+                var friendsData = [{ name: 'Bob', age: 35 }, { name: 'Fred', age: 38 }];
+                var output = _.template(friendsTemplate, { friends: friendsData } );
+                document.body.innerHTML = output;
+            });
+    </script>
+</body>
+</html>

@@ -1,0 +1,35 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Bind Observable Array to Table</title>
+</head>
+<body>
+    <table border="0">
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Type</th>
+            </tr>
+        </thead>
+        <tbody data-bind="foreach: productArray">
+            <tr>
+                <td data-bind="text: product"></td>
+                <td data-bind="text: type"></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <script src="Scripts/knockout-2.2.1.debug.js"></script>
+    <script>
+        var productArray = ko.observableArray([
+            { product: "Widget", type: "Tool" },
+            { product: "Bolt", type: "Fastener" },
+            { product: "Washer", type: "Fastener" },
+            { product: "Screwdriver", type: "Tool" }
+        ]);
+
+        ko.applyBindings(new productArray());
+    </script>
+</body>
+</html>
+

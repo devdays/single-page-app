@@ -1,0 +1,11 @@
+﻿CACHE MANIFEST
+# 2013-07-31
+
+CACHE:
+tmpl.js
+require.js
+text.js
+domReady.js
+lodash.js
+friend-template.html
+2-LoadEverythingWithAppCache.html

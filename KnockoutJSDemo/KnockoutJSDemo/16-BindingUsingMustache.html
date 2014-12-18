@@ -1,0 +1,37 @@
+﻿<html>
+<head>
+    <title>ko.mustache.js example</title>
+
+</head>
+<body>
+    <!-- place for rendered template -->
+    <div data-bind='template: "productTemplate"'></div>
+
+    <!-- mustache template -->
+    <script id='productTemplate' type='text/html'>
+        {{ product }} has {{ quantity }}
+        <button data-bind='click: sellItem'>Sell Item</button>
+    </script>
+
+    <script type="text/javascript" src="Scripts/mustache.js"></script>
+    <script type="text/javascript" src="Scripts/knockout-2.2.1.js"></script>
+    <script type="text/javascript" src="Scripts/ko.mustache.js"></script>
+    <script>
+        ko.setTemplateEngine(new ko.mustacheTemplateEngine());
+    </script>
+
+    <!-- knockout model and bindings -->
+    <script type='text/javascript'>
+        var viewModel = {
+            product: 'Widet',
+            quantity: ko.observable(4),
+            sellItem: function () {
+                if(this.quantity() > 0) {
+                    this.quantity(this.quantity() -1);
+                }
+            }
+        };
+        ko.applyBindings(viewModel);
+    </script>
+</body>
+</html>

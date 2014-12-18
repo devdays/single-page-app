@@ -1,0 +1,41 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+</head>
+<body>
+    <p>First name: <strong data-bind="text: firstName"></strong></p>
+    <p>Last name: <strong data-bind="text: lastName"></strong></p>
+
+    <p>Edit first name : <input data-bind="value: firstName" /></p>
+    <p>Edit last name: <input data-bind="value: lastName" /></p>
+
+    <p>Full name: <strong data-bind="text: fullName"></strong></p>
+
+    <button data-bind="click: capLast">Change Val</button>
+    <script src="Scripts/knockout-2.2.1.debug.js"></script>
+    <script>
+
+        function AppViewModel() {
+            var self = this;
+            self.firstName = ko.observable("Hello");
+            self.lastName = ko.observable("there");
+
+            self.fullName = ko.computed(function () {
+                return self.firstName() + " " + self.lastName();
+            });
+
+            self.capLast = function() {
+                var lName = self.lastName();
+                self.lastName = "text"; 
+                }
+        }
+           
+        var avm = new AppViewModel();
+        ko.applyBindings(avm);
+
+    </script>
+</body>
+</html>
+
+

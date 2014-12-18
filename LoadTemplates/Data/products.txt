@@ -1,0 +1,6 @@
+﻿[
+    { "id": 1, "name": "Action Figure", "category": "Toy" },
+    { "id": 2,"name": "Bicycle", "category": "Transportation" },
+	{ "id": 3,"name": "Doll", "category": "Toy" },		
+	{ "id": 4,"name": "Tricycle", "category": "Transportation" }   
+]

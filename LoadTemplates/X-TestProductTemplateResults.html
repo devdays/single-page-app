@@ -1,0 +1,48 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+</head>
+<body>
+    <div id="productDiv"></div>
+    <div id="productsDiv"></div>
+
+    <script src="Scripts/lodash.js"></script>
+    <script src="Scripts/jquery-2.0.3.js"></script>
+    <script>
+        var myTemplates = [{ "state": "fulfilled", "value": { "tmplName": "productsTmpl", "template": "<ul>\r\n    <% _.forEach(products, function(product) { %>\r\n    <li>\r\n        <strong><%- product.name %></strong>\r\n        <span>( Cateogry: <span class=\"value\"><%- product.category %></span> )</span>\r\n    </li>\r\n    <% }); %>\r\n</ul>" } }, { "state": "rejected", "reason": { "tmplName": "errorTmpl" } }, { "state": "fulfilled", "value": { "tmplName": "productTmpl", "template": "<strong><%- product.name %></strong>\r\n<span>( Cateogry: <span class=\"value\"><%- product.category %></span> )</span>" } }];
+        var productsData =[{ name: 'Action Figure', category: 'Toy' },
+{ name: 'Bicycle', category: 'Transportation' }];
+
+        var flattenedTemplates = _.flatten(myTemplates, 'value');
+        console.log("flattenedTemplates: " + JSON.stringify(flattenedTemplates));
+
+        var flattenedWithoutNulls = _.compact(flattenedTemplates);
+        console.log("flattenedWithoutNulls: " + JSON.stringify(flattenedWithoutNulls));
+
+        var rawProductTemplateItem = _.find(flattenedWithoutNulls, { "tmplName": "productTmpl" });
+        console.log("rawProductTemplateItem : " + JSON.stringify(rawProductTemplateItem));
+        if (rawProductTemplateItem != undefined) {
+            var productTemplate = _.template(rawProductTemplateItem.template);
+            console.log("compiledProductTemplate: " + productTemplate);
+            var theProduct = _.find(productsData, { 'category': 'Transportation' });
+            var output = productTemplate({ product: theProduct });
+            console.log("output: " + output);
+            $('#productDiv').html(output);
+        };
+
+        console.log("ready to check productsTmpl");
+        console.log("flattenedWithoutNulls: " + JSON.stringify(flattenedWithoutNulls));
+
+        var rawProductsTemplateItem = _.find(flattenedWithoutNulls, { "tmplName": "productsTmpl" });
+        console.log("rawProductsTemplateItem : " + JSON.stringify(rawProductsTemplateItem));
+        if (rawProductsTemplateItem != undefined) {
+            var productsTemplate = _.template(rawProductsTemplateItem.template);
+            console.log("compiledProductsTemplate: " + productsTemplate);
+            var output = productsTemplate({ products: productsData });
+            $('#productsDiv').html(output);
+        };
+
+    </script>
+</body>
+</html>

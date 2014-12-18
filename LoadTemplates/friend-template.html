@@ -1,0 +1,8 @@
+﻿<ul>
+    <% _.forEach(friends, function(friend) { %>
+    <li>
+        <span><%- friend.name %></span>
+        <span>( Age: <span class="value"><%- friend.age %></span> )</span>
+    </li>
+    <% }); %>
+</ul>

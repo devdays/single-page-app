@@ -1,0 +1,22 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+</head>
+<body>
+    <p>First name: <strong data-bind="text: firstName"></strong></p>
+    <p>Last name: <strong data-bind="text: lastName"></strong></p>
+
+    <script src="Scripts/knockout-2.2.1.debug.js"></script>
+    <script>
+        // This is a simple *viewmodel* - JavaScript that defines the data and behavior of your UI
+        function AppViewModel() {
+            this.firstName = "Hello";
+            this.lastName = "there";
+        }
+
+        // Activates knockout.js
+        ko.applyBindings(new AppViewModel());
+    </script>
+</body>
+</html>

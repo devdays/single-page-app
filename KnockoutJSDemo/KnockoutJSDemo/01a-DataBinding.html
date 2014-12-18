@@ -1,0 +1,44 @@
+﻿<!doctype html> 
+<html> 
+  <head> 
+  <title>Creating an Observable</title> 
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1" />
+  <link rel="stylesheet" href="style.css" />
+  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+  <script type="text/javascript" src="Scripts/knockout-2.2.1.js"></script>
+  <script type="text/javascript">
+
+      function ViewModel() {
+
+          /* Store 'this' in 'self' so we can use it throughout the object */
+          var self = this;
+
+          /* Create an observable that the view can bind to */
+          self.firstName = ko.observable("Hello");
+          self.lastName = ko.observable("there");
+
+          /* Change the product when the user clicks the button */
+          $('#changeName').click(function () {
+              self.firstName("Howdy");
+              self.lastName("partner");
+          });
+
+      }
+
+      /* When the DOM is ready, activate Knockout */
+      $(function () {
+          ko.applyBindings(new ViewModel());
+      });
+
+  </script>
+</head> 
+<body> 
+  <h1>Creating an Observable</h1>
+ <p>Your first name is: <span data-bind="text: firstName"></span>.</p>
+  <p>Your last name is: <span data-bind="text: lastName"></span>.</p>
+
+  <button id="changeName">Change Name</button>
+
+</body>
+</html>

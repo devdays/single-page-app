@@ -1,0 +1,78 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+</head>
+<body>
+    <h2>
+    Employee List</h2>
+
+<div>
+Search:<input type="text" data-bind="value: empname" />
+
+<input type="button" id='btnSearch' title="Search" value="Search"/>
+</div>
+
+<table style="border-style:solid;border-width:1px">
+    <thead style="background-color:Gray">
+        <tr>
+            <th>
+                ID
+            </th>
+            <th>
+                Name
+            </th>
+             <th>
+                Address
+            </th>
+            <th>
+                Phone
+            </th>
+        </tr>
+    </thead>
+    <tbody data-bind="foreach: employeemodel.employees">
+        <tr>
+            <td data-bind="text: EmployeeID">
+            </td>
+            <td data-bind="text: Name">
+            </td>
+        </tr>
+    </tbody>
+</table>
+    <script>
+        var employeemodel;
+        $(document).ready(function () {
+
+            //initializing viewmodel
+            employeemodel = new viewModel();
+            //binding for ko
+            ko.applyBindings(employeemodel);
+            //bind event
+            $("#btnSearch").click({ handler: employeemodel.search });
+            //call search method
+            //employeemodel.search();
+
+        });
+
+        function viewModel() {
+            var self = this;
+            self.employees = ko.observableArray([]);
+            self.empname = ko.observable('');
+            /*
+            self.search = function () {
+                $.ajax({
+                    url: "Employee/Search",
+                    data: { EmpName: self.empname },
+                    type: "POST",
+                    success: function (response) {
+                        //bind data
+                        self.employees(response.Items);
+                    }
+                });
+                */
+
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,24 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+</head>
+<body>
+    <script src="Scripts/jquery-2.0.3.js"></script>
+    <script src="Scripts/amplify.js"></script>
+    <script>
+        var storeName = "mytext5";
+        var someText = amplify.store(storeName);
+
+        if (someText == undefined) {
+            var text = "text to store";
+            console.log("first time only");
+            amplify.store(storeName, text);
+        };
+
+        var sameText = amplify.store(storeName);
+        console.log('retrieved from ' + storeName + ': ' + someText + ': ' + sameText);
+
+    </script>
+</body>
+</html>

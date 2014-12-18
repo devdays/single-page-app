@@ -1,0 +1,22 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Load Templates Using Require.js</title>
+</head>
+<body>
+    <script src='require.js'></script>
+    <script>
+        requirejs.config({
+            map: {
+                '*': { 'underscore': 'lodash' }
+            }
+        });
+        require(['underscore', 'tmpl!friend-template.html', 'domReady!'],
+            function (_, friendTemplate) {
+                console.log("on html require loaded: " + JSON.stringify(friendTemplate), typeof(friendTemplate));
+                var friendsData = [{ name: 'Bob', age: 35 }, { name: 'Fred', age: 38 }];
+                document.body.innerHTML = friendTemplate({ friends: friendsData });
+            });
+    </script>
+</body>
+</html>

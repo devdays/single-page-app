@@ -1,0 +1,33 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+</head>
+<body>
+    <form data-bind="submit: addItem">
+        New item:
+    <input data-bind='value: itemToAdd, valueUpdate: "afterkeydown"' />
+        <button type="submit" data-bind="enable: itemToAdd().length > 0">Add</button>
+        <p>Your <span data-bind="text: observableItems().length"></span> items:</p>
+        <select multiple="multiple" data-bind="options: observableItems"></select>
+    </form>
+    <script src="Scripts/knockout-2.2.1.debug.js"></script>
+    <script>
+
+        var listData = ["Alpha", "Beta", "Gamma"];
+
+        var listViewModel = function (items) {
+            this.observableItems = ko.observableArray(items);
+            this.itemToAdd = ko.observable("");
+            this.addItem = function () {
+                if (this.itemToAdd() != "") {
+                    this.observableItems.push(this.itemToAdd()); // Adds the item. Writing to the "items" observableArray causes any associated UI to update.
+                    this.itemToAdd(""); // Clears the text box, because it's bound to the "itemToAdd" observable
+                }
+            }.bind(this);  // Ensure that "this" is always this view model
+        };
+
+        ko.applyBindings(new listViewModel(listData));
+    </script>
+</body>
+</html>

@@ -1,0 +1,246 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Load Cached Templates</title>
+</head>
+<body>
+    <!-- ========= Content ================= -->
+    <div id="content"></div>
+    <div id="fail"></div>
+
+
+    <script src='require.js'></script>
+    <script>
+        // ====== set up app namespace =============
+        var app = {};
+        //localStorage.clear();
+
+        // ====== set up require.js ================
+        (function () {
+            requirejs.config({
+                baseUrl: 'Scripts',
+                paths: {
+                    "underscore": "lodash",
+                    "jquery": "jquery-2.0.3",
+                    "q": "q"
+                },
+                //Remember: only use shim config for non-AMD scripts,
+                //scripts that do not already call define(). The shim
+                //config will not work correctly if used on AMD scripts,
+                //in particular, the exports and init config will not
+                //be triggered, and the deps config will be confusing
+                //for those cases.
+
+                shim: {
+                    "amplify": {
+                        //These script dependencies should be loaded before loading
+                        //jquery.js
+                        deps: ["jquery"],
+                        //Once loaded, use the global 'amplify' as the
+                        //module value.
+                        exports: "amplify"
+                    }
+                } //,
+                //map: {
+                //    '*': { 'underscore': 'lodash' }
+                //}
+            });
+        })();
+
+        require(['underscore'], function (_) {
+            console.log(_.VERSION);
+        });
+
+        /* app.retrieveTemplates
+         * retrieves the templates and returns LoDash compiled templates in
+         * an array of 
+         * { tmplName: templateName, template: compiledTemplate }
+         * the template is retrieved from localStorage or sessionStorage. if available
+         * as determined by amplify. If not, it will retrieve the template from the
+         * server using require's text plugin.
+         * the templateNames are by convention in the ../Template folder 
+         * relative to require's path and do not need the .html extension.
+         * example usage fpr template file /Templates/productsTmpl.html:
+         * 
+         *   var myTemplates = app.retrieveTemplates([ "productsTmpl", "errorTmpl"]);
+         *   console.log("templates: " + JSON.stringify(templates));
+         * 
+         *   var compiledProductTemplate = _.find(myTemplates, { "tmplName": "productsTmpl" });
+         *   if (compiledProductTemplate != undefined) {
+         *       console.log("productTemplate: " + compiledProductTemplate.template);
+         *       var productData = [{ name: 'Bob', age: 35 }, { name: 'Fred', age: 38 }];
+         *       document.body.innerHTML = compiledProductTemplate.template({ products: productData });
+         *   };
+         * 
+         * Any templates that receive an error are returned undefined in the "template" 
+         * property.
+         */
+
+        app.retrieveTemplates = function (templateNames, Q) {
+
+            // retrieves a promise 
+            // the promise returns the raw template retrieved using the require text plugin
+            // which uses a XMLHttpRequest
+
+            function loadTemplateFromServer(templateName, Q) {
+                var deferral = Q.defer();
+
+                var requirement = 'text!../Templates/' + templateName + ".html";
+                require([requirement],
+                    function (rawTemplate) {
+                        console.log("loadTemplateFromServer: " + rawTemplate);
+                        deferral.resolve(rawTemplate);
+                    },
+                    function (error) {
+                        console.log("error loadTemplateFromServer for " + templateName + ": " + error);
+                        deferral.reject(new Error(error));
+                    });
+
+                return deferral.promise;
+            }
+
+            function retrieveTemplate(templateName, Q) {
+                var deferral = Q.defer();
+                var resultTemplate = {};
+
+
+                console.log("incoming templateName: " + templateName);
+                var rawTemplateText = amplify.store(templateName);
+                console.log("initial rawTemplateText: " + rawTemplateText);
+
+                // if the template has not been saved previously
+                if (rawTemplateText == undefined) {
+
+                    // loadTemplate returns a promise with the rawTemplate
+                    // as the parameter of the then function
+                    loadTemplateFromServer(templateName, Q)
+                        .then(function (rawTemplate) {
+                            amplify.store(templateName, rawTemplate);
+                            // continue even if there is an error saving in local storage
+                            resultTemplate = {
+                                tmplName: templateName,
+                                template: rawTemplate
+                            }
+                            console.log('resultTemplate from server: ' + JSON.stringify(resultTemplate));
+                            deferral.resolve(resultTemplate);
+                        })
+                        .catch(function (error) {
+                            console.log("catch loadTemplateFromServer error loading " + templateName);
+                            // remove item from the store
+                            amplify.store(templateName, null);
+                            resultTemplate.tmplName = templateName;
+                            console.log('resultTemplate from error: ' + JSON.stringify(resultTemplate));
+                            deferral.reject(resultTemplate);
+                        });
+                } else {
+                    resultTemplate = {
+                        tmplName: templateName,
+                        template: rawTemplateText
+                    }
+                    console.log('resultTemplate from cache: ' + JSON.stringify(resultTemplate));
+                    deferral.resolve(resultTemplate);
+                }
+                
+                return deferral.promise;
+            }
+
+            var deferral = Q.defer();
+            console.log("templateNames: " + JSON.stringify(templateNames));
+            
+            // use amplify to for local storage of each template
+            require(['amplify', 'underscore', 'q'], function (amplify, _, Q) {
+                console.log("require lodash" + _.VERSION);
+
+                var templateFunctions = [];
+
+                //for each template name
+                _.forEach(templateNames, function (templateName) {
+                    var templateFunction = retrieveTemplate(templateName, Q);
+                    templateFunctions.push(templateFunction);
+                }); // _.foreach
+                Q.allSettled(templateFunctions).then(function (resultTemplates) {
+
+                    console.log("ALL !!! resultTemplates: " + JSON.stringify(resultTemplates));
+                    deferral.resolve(resultTemplates);
+                });
+
+                /* 
+                * try this another way using Q and map
+                * doesn't work. 
+                var resultTemplates = [];
+                 
+                Q.allSettled(templateNames
+                    .map(function (templateName) {
+                        // function that occurs for each templateName
+                        var templateFunction = retrieveTemplate(templateName, Q);
+                        console.log("templateFunction: " + JSON.stringify(templateFunction));
+                        resultTemplates.push(templateFunction);
+                    }))
+                .done(function (result) {
+                    console.log("ALL !!! resultTemplates: " + JSON.stringify(result));
+                    console.log("ALL !!! resultTemplates: " + JSON.stringify(resultTemplates));
+                    deferral.resolve(resultTemplates);
+                });
+                */
+            });
+
+            return deferral.promise;
+        }
+
+        require(
+            ['jquery', 'underscore', 'q'],
+            function ($, _, q) {
+                // retrieve template
+                app.retrieveTemplates(["productsTmpl", "errorTmpl", "productTmpl"], q)
+                    .then(function (myTemplates) {
+
+                    /* sample return value:
+                        [
+                        {
+                          "state":"fulfilled",
+                          "value":
+                          {
+                            "tmplName":"productsTmpl",
+                            "template":"<ul>\r\n    <% _.forEach(products, function(product) { %>\r\n    <li>\r\n        <strong><%- product.name %></strong>\r\n        <span>( Cateogry: <span class=\"value\"><%- product.category %></span> )</span>\r\n    </li>\r\n    <% }); %>\r\n</ul>"
+                          }
+                        },
+                        {
+                          "state":"rejected",
+                          "reason":{"tmplName":"errorTmpl"}
+                        
+                        }
+                        ] 
+                        */
+                    console.log("myTemplates: " + JSON.stringify(myTemplates));
+                    
+                    var flattenedTemplates = _.flatten(myTemplates, 'value');
+                    var flattenedWithoutNulls = _.compact(flattenedTemplates);
+                    console.log("flattenedWithoutNulls: " + JSON.stringify(flattenedWithoutNulls));
+
+                    var rawProductTemplateItem = _.find(flattenedWithoutNulls, { "tmplName": "productTmpl" });
+                    console.log("rawProductTemplateItem : " + rawProductTemplateItem);
+                    if (rawProductTemplateItem != undefined) {
+                        var aTemplate = _.template(rawProductTemplateItem.template);
+                        // todo .. do something with aTemplate
+                    };
+
+                    console.log("ready to check productsTmpl");
+                    console.log("flattenedTemplates: " + JSON.stringify(flattenedWithoutNulls));
+
+                    var rawProductsTemplateItem = _.find(flattenedWithoutNulls, { "tmplName": "productsTmpl" });
+                    if (rawProductsTemplateItem != undefined) {
+                        var myTemplate = _.template(rawProductsTemplateItem.template);
+                        // todo .. do soemthing with myTemplate
+                    };
+
+                })
+                .catch(function (error) {
+                    console.log("ready to check errors");
+
+                    //var errorTemplates = _.flatten(myTemplates, 'reason');
+                    console.log("error handler" + JSON.stringify(error));
+                });
+        });
+        </script>
+</body>
+</html>

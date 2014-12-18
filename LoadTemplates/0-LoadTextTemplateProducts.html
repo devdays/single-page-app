@@ -1,0 +1,29 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Load Text Template</title>
+</head>
+<body>
+    <script src='require.js'></script>
+    <script>
+        requirejs.config({
+            baseUrl: 'Scripts',
+            paths: {
+                "_": "Scripts/lodash"
+            },
+            map: {
+                '*': { 'underscore': 'lodash' }
+            }
+        });
+require(['underscore', 'text!../Templates/productsTmpl.html', 'domReady!'],
+    function (_, productsTemplate) {
+        var productssData = [{ name: 'Action Figure', category: 'Toy' },
+            { name: 'Bicycle', category: 'Transportation' }];
+        var output = _.template(productsTemplate, { products: productssData });
+        document.body.innerHTML = output;
+    }
+);
+    </script>
+</body>
+</html>
+

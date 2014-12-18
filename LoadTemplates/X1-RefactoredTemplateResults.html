@@ -1,0 +1,55 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+</head>
+<body>
+     <div id="productDiv"></div>
+    <div id="productsDiv"></div>
+
+    <script src="Scripts/lodash.js"></script>
+    <script src="Scripts/jquery-2.0.3.js"></script>
+    <script>
+        var myTemplates = [{ "state": "fulfilled", "value": { "tmplName": "productsTmpl", "template": "<ul>\r\n    <% _.forEach(products, function(product) { %>\r\n    <li>\r\n        <strong><%- product.name %></strong>\r\n        <span>( Cateogry: <span class=\"value\"><%- product.category %></span> )</span>\r\n    </li>\r\n    <% }); %>\r\n</ul>" } }, { "state": "rejected", "reason": { "tmplName": "errorTmpl" } }, { "state": "fulfilled", "value": { "tmplName": "productTmpl", "template": "<strong><%- product.name %></strong>\r\n<span>( Cateogry: <span class=\"value\"><%- product.category %></span> )</span>" } }];
+        var productsData = [{ name: 'Action Figure', category: 'Toy' },
+{ name: 'Bicycle', category: 'Transportation' }];
+
+        function getCompiledTemplate(templateArray, templateName, returnedCompiledTemplate)
+        {
+            // get the template
+            var flattenedTemplates = _.flatten(templateArray, 'value');
+            console.log("flattenedTemplates: " + JSON.stringify(flattenedTemplates));
+
+            var flattenedWithoutNulls = _.compact(flattenedTemplates);
+            console.log("flattenedWithoutNulls: " + JSON.stringify(flattenedWithoutNulls));
+
+            var rawTemplateItem = _.find(flattenedWithoutNulls, { "tmplName": templateName });
+            console.log("rawTemplateItem : " + JSON.stringify(rawTemplateItem));
+            if (rawTemplateItem != undefined) {
+                var compiledTemplate = _.template(rawTemplateItem.template);
+                console.log("ready to call returnedCompiledTemplate")
+                returnedCompiledTemplate(compiledTemplate);
+            } else {
+                returnedCompiledTemplate(undefined);
+            }
+        }
+
+        getCompiledTemplate(myTemplates, "productTmpl", function (template) {
+            if (template != undefined) {
+                var theProduct = _.find(productsData, { 'category': 'Transportation' });
+                var output = template({ product: theProduct });
+                console.log("output: " + output);
+                $('#productDiv').html(output);
+            };
+        });
+
+        getCompiledTemplate(myTemplates, "productsTmpl", function (template) {
+            if (template != undefined) {
+                var output = template({ products: productsData });
+                $('#productsDiv').html(output);
+            };
+        });
+
+    </script>
+</body>
+</html>

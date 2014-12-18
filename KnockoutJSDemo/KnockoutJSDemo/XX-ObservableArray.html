@@ -1,0 +1,32 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+</head>
+<body>
+
+    <script>
+        var my = { };
+
+        my.productsData =  [
+        { product: "Widget", type: "Tool" },
+        { product: "Bolt", type: "Fastener" },
+        { product: "Washer", type: "Fastener" },
+        { product: "Screwdriver", type: "Tool" }
+        ]
+        
+        my.productsViewModel = function () {
+            var self = this;
+
+            // the product we want to view and edit
+            self.selectedProduct = ko.observable();
+
+            // tha array of products
+            self.products = ko.observableArray(my.products);
+        }
+
+
+
+    </script>
+</body>
+</html>

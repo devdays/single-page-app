@@ -1,0 +1,30 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Binding List to Template</title>
+</head>
+<body>
+    <h2>Participants</h2>
+    Here are the participants:
+    <table>
+        <tr data-bind="template: { name: 'person-template', data: buyer }"></tr>
+        <tr data-bind="template: { name: 'person-template', data: seller }"></tr>
+    </table>
+
+    <script type="text/html" id="person-template">
+        <td data-bind="text: name"></td>
+        <td data-bind="text: credits"></td>
+    </script>
+
+    <script src="Scripts/knockout-2.2.1.debug.js"></script>
+    <script type="text/javascript">
+        function MyViewModel() {
+            this.buyer = { name: 'Franklin', credits: 250 };
+            this.seller = { name: 'Mario', credits: 5800 };
+        }
+        ko.applyBindings(new MyViewModel());
+    </script>
+
+</body>
+</html>
+
