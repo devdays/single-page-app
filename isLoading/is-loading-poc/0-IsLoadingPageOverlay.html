@@ -1,0 +1,79 @@
+<!doctype html>
+<html>
+<head>
+    <title>isLoading jQuery plugin</title>
+
+    	<!--	<link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css" rel="stylesheet">
+        <link href="http://netdna.bootstrapcdn.com/font-awesome/3.0.2/css/font-awesome.css" rel="stylesheet"> -->
+    <link href="Content/bootstrap-responsive.css" rel="stylesheet" />
+    <link href="Content/font-awesome.css" rel="stylesheet" />
+
+    <style>
+        .wrapper{padding-bottom:50px;}
+        .isloading-overlay{position:relative;text-align:center;}.isloading-overlay .isloading-wrapper{background:#FFFFFF;-webkit-border-radius:7px;-webkit-background-clip:padding-box;-moz-border-radius:7px;-moz-background-clip:padding;border-radius:7px;background-clip:padding-box;display:inline-block;margin:0 auto;padding:10px 20px;top:10%;z-index:9000;}
+
+    </style>
+</head>
+<body>
+
+    <div class="header">
+
+        <div class="container wrapper">
+            <h1>isLoading | jQuery plugin</h1>
+        </div>
+
+    </div>
+
+    <div class="container wrapper" style="position: relative;">
+
+        <h3>Download links:</h3>
+
+        <ul>
+            <li>development version: <a href="./jquery.isloading.js">jquery.isloading.js</a></li>
+            <li>minified version: <a href="./jquery.isloading.min.js">jquery.isloading.min.js</a></li>
+        </ul>
+
+
+        <!-- OVERLAY -->
+        <div id="load-overlay">
+
+            <a name="overlay"></a>
+
+            <h3>Overlay</h3>
+
+            <div class="demo well">
+                <p class="alert">container</p>
+                <span class="btn">Test</span>
+            </div>
+        </div>
+        <!--// OVERLAY -->
+    </div>
+
+    <script src="Scripts/jquery-2.0.2.js"></script>
+    <link href="Content/bootstrap-responsive.css" rel="stylesheet" />
+    <script src="Scripts/jquery.isloading.js" type="text/javascript"></script>
+    <script>
+        $(function () {
+
+            // Action on Click
+            $("#load-overlay .btn").click(function () {
+
+                $.isLoading({ text: "Loading" });
+
+                // Setup Loading plugin
+                $("#load-overlay .demo p").removeClass("alert-success");
+
+                // Re-enabling event
+                setTimeout(function () {
+                    $.isLoading("hide");
+                    $("#load-overlay .demo p").html("Content Loaded")
+                                                .addClass("alert-success");
+                }, 2000);
+
+            });
+
+        });
+    </script>
+
+</body>
+</html>

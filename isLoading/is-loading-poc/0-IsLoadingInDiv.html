@@ -1,0 +1,62 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+        <link href="Content/bootstrap-responsive.css" rel="stylesheet" />
+    <link href="Content/font-awesome.css" rel="stylesheet" />
+</head>
+<body>
+    			<div id="load-in-div">
+                
+                <a name="in-tag"></a>
+
+				<h3>Load in Tag</h3>
+
+                <p>
+                    This demo shows how to show the loading message inside the target. <code>$( "selector" ).isLoading({ text: "Loading", position: "inside" });</code>
+                </p>
+
+                <p>
+                    If you want to disable some extra tags/input/etc... while the loading is active, you can use the <code>disableOthers[]</code> option.
+                </p>
+
+				<div id="load1" class="demo well">
+					<p class="alert">container</p>
+					<span class="btn">Test</span>
+				</div>
+
+                    
+<script src="Scripts/jquery-2.0.2.js"></script>
+                    <script src="Scripts/bootstrap.js"></script>
+                    <script src="Scripts/jquery.isloading.js"></script>
+<script>
+    $(function () {
+
+        // Action on Click
+        $("#load-in-div .btn").click(function () {
+
+            // Setup Loading plugin
+            $("#load-in-div .demo p").removeClass("alert-success").isLoading({
+                text: "Loading",
+                position: "inside",
+                disableOthers: [
+                    $("#load-in-div .btn")
+                ]
+            });
+
+            // Re-enabling event
+            setTimeout(function () {
+                $("#load-in-div .demo p").isLoading("hide")
+                                     .html("Content Loaded")
+                                     .addClass("alert-success");
+            }, 1000);
+
+        });
+
+    });
+</script>
+
+				
+			</div>
+</body>
+</html>
